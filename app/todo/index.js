@@ -1,13 +1,27 @@
-'use strict';
+'use strict'
 // { name: タスクの文字列, state: 完了しているかどうかの真偽値 }
-const tasks = [];
+let tasks = []
+const fs = require('fs')
+const fileName = './tasks.json'
+
+try {
+  const data = fs.readFileSync(fileName, 'utf8')
+  tasks = JSON.parse(data)
+} catch (ignore) {
+  console.log(fileName + 'から復元できませんでした')
+}
+
+function saveTasks() {
+  fs.writeFileSync(fileName, JSON.stringify(tasks), 'utf8')
+}
 
 /**
  * TODOを追加する
  * @param {string} task
  */
 function add(task) {
-  tasks.push({ name: task, state: false });
+  tasks.push({ name: task, state: false })
+  saveTasks()
 }
 
 /**
@@ -16,7 +30,7 @@ function add(task) {
 * @return {boolean} 完了したかどうか
 */
 function isDone(taskAndIsDonePair) {
-  return taskAndIsDonePair.state;
+  return taskAndIsDonePair.state
 }
 
 /**
@@ -25,7 +39,7 @@ function isDone(taskAndIsDonePair) {
 * @return {boolean} 完了していないかどうか
 */
 function isNotDone(taskAndIsDonePair) {
-  return !isDone(taskAndIsDonePair);
+  return !isDone(taskAndIsDonePair)
 }
 
 /**
@@ -33,7 +47,7 @@ function isNotDone(taskAndIsDonePair) {
  * @return {array}
  */
 function list() {
-  return tasks.filter(isNotDone).map(t => t.name);
+  return tasks.filter(isNotDone).map(t => t.name)
 }
 
 /**
@@ -41,9 +55,10 @@ function list() {
  * @param {string} task
  */
 function done(task) {
-  const indexFound = tasks.findIndex(t => t.name === task);
+  const indexFound = tasks.findIndex(t => t.name === task)
   if (indexFound !== -1) {
-    tasks[indexFound].state = true;
+    tasks[indexFound].state = true
+    saveTasks()
   }
 }
 
@@ -52,7 +67,7 @@ function done(task) {
  * @return {array}
  */
 function donelist() {
-  return tasks.filter(isDone).map(t => t.name);
+  return tasks.filter(isDone).map(t => t.name)
 }
 
 /**
@@ -60,9 +75,10 @@ function donelist() {
  * @param {string} task
  */
 function del(task) {
-  const indexFound = tasks.findIndex(t => t.name === task);
+  const indexFound = tasks.findIndex(t => t.name === task)
   if (indexFound !== -1) {
-    tasks.splice(indexFound, 1);
+    tasks.splice(indexFound, 1)
+    saveTasks()
   }
 }
 
@@ -71,5 +87,5 @@ module.exports = {
   list,
   done,
   donelist,
-  del
-};
+  del,
+}
